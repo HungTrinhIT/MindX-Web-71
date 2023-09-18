@@ -7,7 +7,7 @@ import authMiddleware from '../middlewares/auth.mdw.js';
 const router = express.Router();
 
 router.use('/auth', authRouter);
-router.use('/posts', authMiddleware, postRouter);
+router.use('/posts', postRouter);
 router.use('/users', userRouter);
 
 export default router;

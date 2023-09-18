@@ -1,64 +1,34 @@
 import express from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { db } from '../config/database.js';
+import { ObjectId } from 'mongodb';
 
 const router = express.Router();
 
-let posts = [
-  {
-    id: '1',
-    title: 'Master ReactJS in 4 hours',
-    description: "It's free",
-    author: 'Harry',
-  },
-  {
-    id: '2',
-    title: 'Rap Viet mua 3',
-    description: 'Vong chung ket Rap Viet 3',
-    author: 'vieon',
-  },
-  {
-    id: '3',
-    title: 'Rap Viet mua 4',
-    description: 'Vong chung ket Rap Viet 4',
-    author: 'VTV',
-  },
-  {
-    id: '4',
-    title: 'Master ReactJS in 4 hours',
-    description: "It's free",
-    author: 'Harry',
-  },
-  {
-    id: '5',
-    title: 'Rap Viet mua 3',
-    description: 'Vong chung ket Rap Viet 3',
-    author: 'vieon',
-  },
-  {
-    id: '6',
-    title: 'Rap Viet mua 4',
-    description: 'Vong chung ket Rap Viet 4',
-    author: 'VTV',
-  },
-];
+router.get('/', async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
 
-router.get('/', (req, res) => {
-  const { page, per_page } = req.query;
+  const skip = (page - 1) * limit;
+  const posts = await db.posts.find().skip(skip).limit(limit).toArray();
 
-  try {
-    res.json({
-      data: posts,
-    });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json(error);
-  }
+  const totalPost = await db.posts.countDocuments();
+
+  const totalPages = Math.ceil(totalPost / limit);
+  res.json({
+    data: posts,
+    pagination: {
+      totalPages,
+      page,
+      totalPost,
+      limit,
+    },
+  });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
-  const existingPost = posts.find((post) => post.id === id);
+  const existingPost = await db.posts.findOne({ _id: new ObjectId(id) });
 
   if (!existingPost) {
     return res.json({
@@ -66,10 +36,10 @@ router.get('/:id', (req, res) => {
     });
   }
 
-  res.json({ data: existingPost });
+  res.json(existingPost);
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { title, description } = req.body;
 
   if (!title || !description) {
@@ -78,49 +48,62 @@ router.post('/', (req, res) => {
     });
   }
 
-  posts.push({
-    id: uuidv4(),
-    title,
-    description,
-  });
+  try {
+    const newPost = {
+      title,
+      description,
+    };
 
-  res.json({
-    data: posts,
-  });
+    const result = await db.posts.insertOne(newPost);
+
+    res.status(201).json({
+      message: 'Post created successfully',
+      data: result,
+    });
+  } catch (error) {
+    console.error('create new post failed:', error);
+    res.status(500).json(error);
+  }
 });
 
-router.put('/:id', (req, res) => {
-  const body = req.body;
+router.put('/:id', async (req, res) => {
+  const { title, description } = req.body;
   const { id } = req.params;
 
-  const existingPostIndex = posts.findIndex((post) => post.id === id);
+  const existingPost = await db.posts.findOne({ _id: new ObjectId(id) });
 
-  if (existingPostIndex === -1) {
+  if (!existingPost) {
     return res.status(400).json({
       message: 'Post not found',
     });
   }
 
-  posts[existingPostIndex] = {
-    ...posts[existingPostIndex],
-    ...body,
+  let updatedFields = {
+    ...(title && { title }),
+    ...(description && { description }),
   };
 
-  return res.json({ data: posts });
+  await db.posts.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: updatedFields,
+    }
+  );
+
+  return res.json({});
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
+  const existingPost = await db.posts.find({ _id: new ObjectId(id) });
 
-  const existingPostIndex = posts.findIndex((post) => post.id === id);
-
-  if (existingPostIndex === -1) {
-    return res.status(400).json({
+  if (!existingPost) {
+    return res.json({
       message: 'Post not found',
     });
   }
 
-  posts.splice(existingPostIndex, 1);
+  await db.posts.deleteOne({ _id: new ObjectId(id) });
   return res.json({ data: 'Delete successfully' });
 });
 

@@ -1,30 +1,11 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcryptjs';
+import { db } from '../config/database.js';
+
 const router = express.Router();
 
-const userMockData = [
-  {
-    id: '1',
-    email: 'alice@gmail.com',
-    password: 'alice@123',
-    fullname: 'Alice H',
-  },
-  {
-    id: '2',
-    email: 'bob@gmail.com',
-    password: 'bob@123',
-    fullname: 'Bobby',
-  },
-  {
-    id: '3',
-    email: 'charlie@gmail.com',
-    password: 'charlie@123',
-    fullname: 'Charlie Put',
-  },
-];
-
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { email, password } = req.body || {};
 
   // 1.Validation request body
@@ -34,13 +15,23 @@ router.post('/login', (req, res) => {
     });
   }
 
-  const existingUser = userMockData.find(
-    (u) => u.email === email && u.password === password
-  );
+  const existingUser = await db.users.findOne({ email });
 
   if (!existingUser) {
     return res.json({
-      message: 'Email or password does not correct',
+      message: 'Email does not correct',
+    });
+  }
+
+  const isMatchedPassword = bcrypt.compareSync(password, existingUser.password);
+  console.log(
+    '🚀 ~ file: auth.route.js:27 ~ router.post ~ isMatchedPassword:',
+    isMatchedPassword
+  );
+
+  if (!isMatchedPassword) {
+    return res.json({
+      message: 'Password does not correct',
     });
   }
 
@@ -49,6 +40,7 @@ router.post('/login', (req, res) => {
     id: existingUser.id,
     email: existingUser.email,
     fullname: existingUser.fullname,
+    role: 'user',
   };
   const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -62,39 +54,38 @@ router.post('/login', (req, res) => {
   });
 });
 
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
   const { email, password, fullname } = req.body;
 
-  // 1. Validation
   if (!(email && password && fullname)) {
     return res.status(400).json({
       message: 'Missing required keys',
     });
   }
 
-  // 2. Check duplicate
-  const existingUser = userMockData.find((u) => u.email === email);
-
+  const existingUser = await db.users.findOne({ email });
   if (existingUser) {
     return res.status(400).json({
       message: 'Email is already taken',
     });
   }
 
-  // 3. Create new user
+  const saltRounds = 10;
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
   const newUser = {
     email,
-    password,
+    password: hashedPassword,
     fullname,
-    id: uuidv4(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    role: 'user',
   };
 
-  // 4. Add to database
-  userMockData.push(newUser);
+  await db.users.insertOne(newUser);
 
-  // 5. Response to client
   res.status(201).json({
-    message: 'User has been created successfully',
+    message: 'Register new user successfully',
   });
 });
 
