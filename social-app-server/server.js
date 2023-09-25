@@ -6,7 +6,7 @@ import { connectToDatabase } from './config/database.js';
 
 import cors from 'cors';
 
-const whitelist = ['http://localhost:5173'];
+const whitelist = ['https://social-app-server-p5cm.onrender.com'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (process.env.NODE_ENV === 'development') {
