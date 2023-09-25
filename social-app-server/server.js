@@ -9,6 +9,9 @@ import cors from 'cors';
 const whitelist = ['http://localhost:5173'];
 const corsOptions = {
   origin: function (origin, callback) {
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -19,10 +22,10 @@ const corsOptions = {
 };
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT;
 
 // 1. Initiate database connection
-connectToDatabase();
+connectToDatabase()
 
 // 2. Define middlewares
 app.use(express.json());

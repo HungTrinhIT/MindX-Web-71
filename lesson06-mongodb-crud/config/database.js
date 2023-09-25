@@ -1,13 +1,14 @@
 import { MongoClient } from 'mongodb';
 
-const MONGO_URI = 'mongodb://localhost:27017';
+console.log("process.env.MONGO_URI", process.env.MONGO_URI)
 const DATABASE = 'social-apps-web-71';
 
 const db = {};
 
 const connectToDatabase = async () => {
   try {
-    const mongoClient = new MongoClient(MONGO_URI);
+    console.log("AAAA", process.env.MONGO_URI)
+    const mongoClient = new MongoClient(process.env.MONGO_URI);
     await mongoClient.connect();
 
     console.log('Database connected successfully');
