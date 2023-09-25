@@ -32,10 +32,10 @@ connectToDatabase()
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(apiLoggerMiddleware);
-app.use(handleErrorMiddleware);
 
 // 3. Define routes
 app.use('/api/v1', appRouter);
+app.use(handleErrorMiddleware);
 
 // 4. Handle error
 // ...
