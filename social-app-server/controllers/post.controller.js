@@ -25,23 +25,27 @@ const createPost = async (req, res) => {
 };
 
 const getAllPost = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-  const posts = await db.posts.find().skip(skip).limit(limit).toArray();
-  const totalPost = await db.posts.countDocuments();
-  const totalPages = Math.ceil(totalPost / limit);
+    const posts = await db.posts.find().skip(skip).limit(limit).toArray();
+    const totalPost = await db.posts.countDocuments();
+    const totalPages = Math.ceil(totalPost / limit);
 
-  res.json({
-    data: posts,
-    pagination: {
-      totalItems: totalPost,
-      limit,
-      currentPage: page,
-      totalPages,
-    },
-  });
+    res.json({
+      data: posts,
+      pagination: {
+        totalItems: totalPost,
+        limit,
+        currentPage: page,
+        totalPages,
+      },
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 const getSingleByID = async (req, res) => {
