@@ -3,16 +3,10 @@ import bcrypt from 'bcryptjs';
 import asyncHandler from 'express-async-handler';
 import { db } from '../config/database.js';
 import { ObjectId } from 'mongodb';
+import * as yup from 'yup';
 
 const register = asyncHandler(async (req, res) => {
   const { email, password, fullname, phoneNumber, gender, address } = req.body;
-
-  // 1. Validation
-  if (!(email && password && fullname && phoneNumber && gender && address)) {
-    return res.status(400).json({
-      message: 'Missing required keys',
-    });
-  }
 
   // 2. Check duplicate
   const existingUser = await db.users.findOne({ email });
@@ -55,13 +49,6 @@ const register = asyncHandler(async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body || {};
-
-  // 1.Validation request body
-  if (!email || !password) {
-    return res.status(400).json({
-      message: 'Missing required keys',
-    });
-  }
 
   // 2. Check email
   const existingUser = await db.users.findOne({ email });
