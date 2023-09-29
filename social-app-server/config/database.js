@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-const MONGO_URI = 'mongodb://localhost:27017';
+const MONGO_URI = process.env.MONGO_URI;
 const DATABASE = 'social-apps-web-71';
 
 const db = {};
