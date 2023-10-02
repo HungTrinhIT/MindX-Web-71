@@ -13,7 +13,7 @@ router.post(
   AuthController.login
 );
 router.post(
-  '/register',
+  '/signup',
   validateMdw(AuthValidator.registerSchema),
   AuthController.register
 );

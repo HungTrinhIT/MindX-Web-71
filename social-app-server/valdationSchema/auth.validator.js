@@ -12,7 +12,7 @@ const registerSchema = yup.object().shape({
   fullname: yup.string().required(),
   phoneNumber: yup.string().optional(),
   gender: yup.string().oneOf(['male', 'female', 'other']).required(),
-  address: yup.string().required(),
+  address: yup.string().optional(),
 });
 
 const loginSchema = yup.object().shape({

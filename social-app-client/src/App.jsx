@@ -1,56 +1,21 @@
-import { useEffect, useState } from 'react';
-import PostAPI from './services/PostAPI';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home/Home';
+import Login from './pages/Login/Login';
+import SignUp from './pages/SignUp/SignUp';
+import SiteLayout from './components/layouts/SiteLayout/SiteLayout';
 
-function App() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const fetchAllPosts = async () => {
-    try {
-      setLoading(true);
-      const posts = await PostAPI.getAll();
-      setPosts(posts.data.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllPosts();
-  }, []);
-
-  const listPost =
-    posts.length === 0 ? (
-      <h3>Empty post</h3>
-    ) : (
-      <div>
-        {posts.map((post) => {
-          return (
-            <div
-              key={post._id}
-              style={{
-                background: '#fff',
-                borderRadius: '8px',
-                padding: '24px',
-                color: '#000',
-                marginBottom: '24px',
-              }}>
-              <h2>{post.title}</h2>
-              <p>{post.description}</p>
-            </div>
-          );
-        })}
-      </div>
-    );
-
-  if (loading) {
-    return <p>Fetching posts...</p>;
-  }
-
-  return <div>{listPost}</div>;
-}
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path='/' element={<SiteLayout />}>
+          <Route index element={<Home />} />
+          <Route path='login' element={<Login />} />
+          <Route path='signup' element={<SignUp />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;
