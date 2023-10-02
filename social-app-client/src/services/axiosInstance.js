@@ -7,4 +7,14 @@ const api = axios.create({
   timeout: 10000,
 });
 
+api.interceptors.request.use((config) => {
+  const accessToken = localStorage.getItem('accessToken') || '';
+
+  if (accessToken) {
+    config.headers['x-access-token'] = accessToken;
+  }
+
+  return config;
+});
+
 export default api;

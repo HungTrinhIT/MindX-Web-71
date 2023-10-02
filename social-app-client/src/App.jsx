@@ -1,56 +1,31 @@
-import { useEffect, useState } from 'react';
-import PostAPI from './services/PostAPI';
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/Home/Home';
+import SiteLayout from './components/layouts/SiteLayout/SiteLayout';
+import SignUpPage from './pages/SignUp/SignUpPage';
+import LoginPage from './pages/Login/LoginPage';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchCurrentUser } from './redux/auth/authAction';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
-function App() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const fetchAllPosts = async () => {
-    try {
-      setLoading(true);
-      const posts = await PostAPI.getAll();
-      setPosts(posts.data.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const App = () => {
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchAllPosts();
+    dispatch(fetchCurrentUser());
   }, []);
 
-  const listPost =
-    posts.length === 0 ? (
-      <h3>Empty post</h3>
-    ) : (
-      <div>
-        {posts.map((post) => {
-          return (
-            <div
-              key={post._id}
-              style={{
-                background: '#fff',
-                borderRadius: '8px',
-                padding: '24px',
-                color: '#000',
-                marginBottom: '24px',
-              }}>
-              <h2>{post.title}</h2>
-              <p>{post.description}</p>
-            </div>
-          );
-        })}
-      </div>
-    );
-
-  if (loading) {
-    return <p>Fetching posts...</p>;
-  }
-
-  return <div>{listPost}</div>;
-}
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<SiteLayout />}>
+          <Route index element={<ProtectedRoute component={HomePage} />} />
+          <Route path='signup' element={<SignUpPage />} />
+          <Route path='login' element={<LoginPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default App;
