@@ -17,4 +17,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.log('here', response);
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('accessToken');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
