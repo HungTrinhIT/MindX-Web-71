@@ -78,7 +78,7 @@ const login = asyncHandler(async (req, res) => {
   const SECRET_KEY = process.env.SECRET_KEY;
 
   const token = jwt.sign(payload, SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES_TIME, // 5 minutes
+    expiresIn: process.env.JWT_EXPIRES_TIME,
   });
 
   //  5. Response
