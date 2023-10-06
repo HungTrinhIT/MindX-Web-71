@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { TOKEN_TYPES } from '../../utils/constants';
 import FieldTextInput from '../../components/FieldTextInput/FieldTextInput';
 import AuthAPI from '../../services/AuthAPI';
 import Button from '../../components/Button/Button';
 import CustomErrorMessage from '../../components/CustomErrorMessage/CustomErrorMessage';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/auth/authSlice';
 
 const LoginValidationSchema = yup.object().shape({
@@ -23,6 +23,7 @@ const LoginValidationSchema = yup.object().shape({
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const Login = () => {
         const accessToken = response.data.accessToken;
 
         if (accessToken) {
-          localStorage.setItem(TOKEN_TYPES.ACCESS_TOKEN, accessToken);
+          localStorage.setItem('accessToken', accessToken);
           const currenUserResponse = await AuthAPI.fetchCurrentUser();
           const currentUserData = currenUserResponse.data;
 
@@ -61,6 +62,10 @@ const Login = () => {
   });
 
   const { handleSubmit, handleChange, errors } = formik;
+
+  if (isAuthenticated) {
+    return <Navigate to='/' />;
+  }
 
   return (
     <div className='flex justify-center items-center mt-10 md:mt-[100px]'>

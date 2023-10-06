@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import FieldTextInput from '../../components/FieldTextInput/FieldTextInput';
 import AuthAPI from '../../services/AuthAPI';
 import Button from '../../components/Button/Button';
 import { useFormik } from 'formik';
 import CustomErrorMessage from '../../components/CustomErrorMessage/CustomErrorMessage';
+import { useSelector } from 'react-redux';
 
 import * as yup from 'yup';
 const SignUpValidationSchema = yup.object().shape({
@@ -25,6 +26,7 @@ const SignUpValidationSchema = yup.object().shape({
 const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -51,6 +53,10 @@ const SignUp = () => {
   });
 
   const { handleSubmit, handleChange, errors } = formik;
+
+  if (isAuthenticated) {
+    return <Navigate to='/' />;
+  }
 
   return (
     <div className='flex justify-center items-center mt-10 md:mt-[100px]'>

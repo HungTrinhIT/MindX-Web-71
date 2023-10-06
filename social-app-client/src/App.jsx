@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import AuthAPI from './services/AuthAPI';
 import { useDispatch } from 'react-redux';
 import { login } from './redux/auth/authSlice';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import Profile from './pages/Profile/Profile';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -35,7 +37,11 @@ const App = () => {
     <Router>
       <Routes>
         <Route path='/' element={<SiteLayout />}>
-          <Route index element={<Home />} />
+          <Route index element={<ProtectedRoute component={Home} />} />
+          <Route
+            path='profile'
+            element={<ProtectedRoute component={Profile} />}
+          />
           <Route path='login' element={<Login />} />
           <Route path='signup' element={<SignUp />} />
         </Route>

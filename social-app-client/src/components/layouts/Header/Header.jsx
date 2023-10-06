@@ -1,9 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../../redux/auth/authSlice';
 
 const Header = () => {
   const { isAuthenticated, currentUser } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const onHandleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+  };
 
   const publicNavs = (
     <>
@@ -22,9 +30,18 @@ const Header = () => {
 
   const authenticatedNavs = (
     <>
+      <li>
+        <Link to='/' className='text-gray-500 hover:text-gray-600'>
+          Home
+        </Link>
+      </li>
       <li className='text-gray-500'>Hello {currentUser?.fullname}</li>
       <li>
-        <p className='text-gray-500 hover:text-gray-600'>Logout</p>
+        <p
+          className='text-gray-500 hover:text-gray-600 cursor-pointer'
+          onClick={onHandleLogout}>
+          Logout
+        </p>
       </li>
     </>
   );
@@ -38,11 +55,6 @@ const Header = () => {
       </div>
       <nav>
         <ul className='flex items-center gap-4'>
-          <li>
-            <Link to='/' className='text-gray-500 hover:text-gray-600'>
-              Home
-            </Link>
-          </li>
           {isAuthenticated ? authenticatedNavs : publicNavs}
         </ul>
       </nav>

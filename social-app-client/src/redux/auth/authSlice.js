@@ -15,9 +15,14 @@ const authSlice = createSlice({
       state.currentUser = payload.user;
       state.isAuthenticated = true;
     },
+    logout: (state) => {
+      localStorage.removeItem('accessToken');
+      state.isAuthenticated = false;
+      state.currentUser = {};
+    },
   },
 });
 
-export const { login } = authSlice.actions;
+export const { login, logout } = authSlice.actions;
 
 export default authSlice.reducer;
