@@ -7,9 +7,11 @@ import FieldTextInput from '../../components/FieldTextInput/FieldTextInput';
 import AuthAPI from '../../services/AuthAPI';
 import Button from '../../components/Button/Button';
 import CustomErrorMessage from '../../components/CustomErrorMessage/CustomErrorMessage';
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/auth/authSlice';
 
 const LoginValidationSchema = yup.object().shape({
-  email: yup.string().email().required(),
+  email: yup.string().email('Email must be a valid email').required(),
   password: yup
     .string()
     .matches(
@@ -21,6 +23,7 @@ const LoginValidationSchema = yup.object().shape({
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -39,11 +42,13 @@ const Login = () => {
         if (accessToken) {
           localStorage.setItem(TOKEN_TYPES.ACCESS_TOKEN, accessToken);
           const currenUserResponse = await AuthAPI.fetchCurrentUser();
-          // TODO:
-          // 1. Redux store: store user info, user session
-          // 2. Protected route
-          // 3. Check JWT expire time
-          // 4. Handle Navbar and logout function
+          const currentUserData = currenUserResponse.data;
+
+          const payload = {
+            user: currentUserData,
+          };
+
+          dispatch(login(payload));
           navigate('/');
         }
       } catch (error) {
