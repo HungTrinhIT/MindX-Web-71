@@ -34,6 +34,7 @@ const SignUpPage = () => {
   });
 
   const { handleSubmit, handleChange } = formik;
+
   if (isAuthenticated) {
     return <Navigate to='/' />;
   }
