@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { AiOutlineUser } from 'react-icons/ai';
 import { logout } from '../../../redux/auth/authSlice';
 
 const Header = () => {
@@ -36,6 +37,11 @@ const Header = () => {
         </Link>
       </li>
       <li className='text-gray-500'>Hello {currentUser?.fullname}</li>
+      <li>
+        <Link to='/profile' className='text-gray-500'>
+          <p>Profile page</p>
+        </Link>
+      </li>
       <li>
         <p
           className='text-gray-500 hover:text-gray-600 cursor-pointer'

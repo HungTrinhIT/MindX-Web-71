@@ -63,8 +63,10 @@ const Login = () => {
 
   const { handleSubmit, handleChange, errors } = formik;
 
+  const currentRoute = window.location.pathname;
+  console.log('🚀 ~ file: Login.jsx:67 ~ Login ~ currentRoute:', currentRoute);
   if (isAuthenticated) {
-    return <Navigate to='/' />;
+    return <Navigate to={currentRoute} />;
   }
 
   return (
