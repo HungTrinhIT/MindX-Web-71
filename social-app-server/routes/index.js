@@ -3,7 +3,6 @@ import postRouter from './post.route.js';
 
 import userRouter from './user.route.js';
 import authRouter from './auth.route.js';
-import authMiddleware from '../middlewares/auth.mdw.js';
 
 const router = express.Router();
 

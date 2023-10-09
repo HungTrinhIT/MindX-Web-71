@@ -18,11 +18,11 @@ const uploadSingleFile = (filePath, folder = 'social-web-app-71') => {
       (error, result) => {
         if (error) {
           reject(error);
+          throw new Error(error);
         } else {
           // Upload thành công lên cloudinary
           // Delete temp image ở trong folder uploads
           fs.unlinkSync(filePath);
-
           resolve({
             url: result.secure_url,
             id: result.public_id,
