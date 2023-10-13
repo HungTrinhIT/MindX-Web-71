@@ -7,7 +7,7 @@ const SiteLayout = () => {
   return (
     <>
       <Header />
-      <main className='max-w-[1280px] m-[0_auto] p-[24px] md:p-[2rem]'>
+      <main className='max-w-[1280px] m-[0_auto] p-[24px] md:p-[2rem] min-h-screen'>
         <Outlet />
       </main>
       <Footer />

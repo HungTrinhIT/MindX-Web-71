@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import * as yup from 'yup';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { TOKEN_TYPES } from '../../utils/constants';
 import FieldTextInput from '../../components/FieldTextInput/FieldTextInput';
 import AuthAPI from '../../services/AuthAPI';
 import Button from '../../components/Button/Button';
 import CustomErrorMessage from '../../components/CustomErrorMessage/CustomErrorMessage';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../redux/auth/authSlice';
+
+import { fetchCurrentUser } from '../../redux/auth/authActions';
 
 const LoginValidationSchema = yup.object().shape({
   email: yup.string().email('Email must be a valid email').required(),
@@ -42,14 +42,7 @@ const Login = () => {
 
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
-          const currenUserResponse = await AuthAPI.fetchCurrentUser();
-          const currentUserData = currenUserResponse.data;
-
-          const payload = {
-            user: currentUserData,
-          };
-
-          dispatch(login(payload));
+          await dispatch(fetchCurrentUser());
           navigate('/');
         }
       } catch (error) {

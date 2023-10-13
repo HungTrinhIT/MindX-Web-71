@@ -9,28 +9,16 @@ import { useDispatch } from 'react-redux';
 import { login } from './redux/auth/authSlice';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Profile from './pages/Profile/Profile';
+import { fetchCurrentUser } from './redux/auth/authActions';
 
 const App = () => {
   const dispatch = useDispatch();
 
-  const fetchCurrenUser = async () => {
+  useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
-      try {
-        const currenUser = await AuthAPI.fetchCurrentUser();
-        const payload = {
-          user: currenUser.data,
-        };
-
-        dispatch(login(payload));
-      } catch (error) {
-        console.log('fetch-current-user-failed:', error);
-      }
+      dispatch(fetchCurrentUser());
     }
-  };
-
-  useEffect(() => {
-    fetchCurrenUser();
   }, []);
 
   return (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { FaUserLarge } from 'react-icons/fa6';
 import { logout } from '../../../redux/auth/authSlice';
 
 const Header = () => {
@@ -35,7 +36,14 @@ const Header = () => {
           Home
         </Link>
       </li>
-      <li className='text-gray-500'>Hello {currentUser?.fullname}</li>
+      <li className='text-gray-500'>
+        <Link to='/profile'>
+          <div className='flex items-center gap-2'>
+            <span>Hello {currentUser?.fullname}</span>
+            <FaUserLarge color='text-[#000000]' size={24} />
+          </div>
+        </Link>
+      </li>
       <li>
         <p
           className='text-gray-500 hover:text-gray-600 cursor-pointer'
