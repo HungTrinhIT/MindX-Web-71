@@ -35,7 +35,9 @@ const Header = () => {
           Home
         </Link>
       </li>
-      <li className='text-gray-500'>Hello {currentUser?.fullname}</li>
+      <li className='text-gray-500'>
+        <Link to='/profile'>Hello {currentUser?.fullname}</Link>
+      </li>
       <li>
         <p
           className='text-gray-500 hover:text-gray-600 cursor-pointer'
