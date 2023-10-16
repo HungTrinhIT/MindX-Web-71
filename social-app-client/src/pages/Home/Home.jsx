@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import PostAPI from '../../services/PostAPI';
+import CreatePostForm from '../../components/CreatePostForm/CreatePostForm';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -43,7 +44,12 @@ const Home = () => {
     return <p>Fetching posts...</p>;
   }
 
-  return <div>{listPost}</div>;
+  return (
+    <div className='flex flex-col justify-center items-center'>
+      <CreatePostForm />
+      {listPost}
+    </div>
+  );
 };
 
 export default Home;

@@ -6,8 +6,12 @@ const PostAPI = {
     return api.get(url);
   },
   getById: (id) => {
-    const url = `posts/${id}`;
+    const url = `/posts/${id}`;
     return api.get(url);
+  },
+  create: (body) => {
+    const url = `/posts`;
+    return api.post(url, body);
   },
 };
 

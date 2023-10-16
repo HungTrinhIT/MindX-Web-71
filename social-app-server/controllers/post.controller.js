@@ -1,8 +1,12 @@
 import { ObjectId } from 'mongodb';
+import asyncHandler from 'express-async-handler';
 import { db } from '../config/database.js';
+import CloudinaryService from '../services/cloudinary.service.js';
 
-const createPost = async (req, res) => {
+const createPost = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
+  const files = req.files;
+  const user = req.user;
 
   if (!title || !description) {
     res.status(400).json({
@@ -10,9 +14,20 @@ const createPost = async (req, res) => {
     });
   }
 
+  let uploadPromises = [];
+  if (files.length > 0) {
+    uploadPromises = files.map(async (file) => {
+      return CloudinaryService.uploadSingleFile(file.path);
+    });
+  }
+
+  const uploadedPhotos = await Promise.all(uploadPromises);
+
   const newPost = {
     title,
     description,
+    photos: uploadedPhotos || [],
+    userId: user.id,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -22,7 +37,7 @@ const createPost = async (req, res) => {
   res.status(201).json({
     message: 'Created successfully',
   });
-};
+});
 
 const getAllPost = async (req, res) => {
   try {
@@ -46,6 +61,10 @@ const getAllPost = async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
+};
+
+const getAllPostsByUser = async (req, res) => {
+  // Logic
 };
 
 const getSingleByID = async (req, res) => {
