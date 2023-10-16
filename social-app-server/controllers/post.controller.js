@@ -2,7 +2,11 @@ import { ObjectId } from 'mongodb';
 import { db } from '../config/database.js';
 
 const createPost = async (req, res) => {
+  console.log('Files:', req.files);
   const { title, description } = req.body;
+
+  console.log('title:', title);
+  console.log('title:', description);
 
   if (!title || !description) {
     res.status(400).json({
