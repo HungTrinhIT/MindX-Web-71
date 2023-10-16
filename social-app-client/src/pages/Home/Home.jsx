@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import PostAPI from '../../services/PostAPI';
+import CreatePost from '../../components/CreatePost/CreatePost';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -25,18 +26,21 @@ const Home = () => {
     posts.length === 0 ? (
       <h3>Empty post</h3>
     ) : (
-      <div>
-        {posts.map((post) => {
-          return (
-            <div
-              key={post._id}
-              className='bg-[#fff] rounded-[8px] p-[24px] text-black mb-[24px] max-w-[400px]'>
-              <h2>{post.title}</h2>
-              <p>{post.description}</p>
-            </div>
-          );
-        })}
-      </div>
+      <>
+        <CreatePost />
+        <div>
+          {posts.map((post) => {
+            return (
+              <div
+                key={post._id}
+                className='bg-[#fff] rounded-[8px] p-[24px] text-black mb-[24px] max-w-[400px]'>
+                <h2>{post.title}</h2>
+                <p>{post.description}</p>
+              </div>
+            );
+          })}
+        </div>
+      </>
     );
 
   if (loading) {
