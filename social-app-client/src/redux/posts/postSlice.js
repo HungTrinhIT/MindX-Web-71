@@ -12,7 +12,6 @@ const postSlice = createSlice({
   name: 'posts',
   initialState,
   extraReducers: (builder) => {
-    // Handle async action
     builder
       .addCase(fetchPosts.pending, (state) => {
         state.fetchPostPending = true;
@@ -20,7 +19,7 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, { payload }) => {
         state.fetchPostPending = false;
-        state.posts = payload.posts;
+        state.posts = [...state.posts, ...payload.posts];
         state.pagination = payload.pagination;
       })
       .addCase(fetchPosts.rejected, (state, { payload }) => {

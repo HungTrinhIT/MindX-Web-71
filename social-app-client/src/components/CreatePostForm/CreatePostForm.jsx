@@ -22,7 +22,6 @@ const CreatePostForm = () => {
 
     try {
       const formData = new FormData();
-
       for (let file of selectedPhotos) {
         formData.append('photos', file);
       }
