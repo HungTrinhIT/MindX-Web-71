@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import Button from '../Button/Button';
 import PostAPI from '../../services/PostAPI';
+import { useDispatch } from 'react-redux';
+import { fetchPosts } from '../../redux/posts/postAction';
 
 const CreatePostForm = () => {
   const [selectedPhotos, setSelectedPhotos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
   const onSelectPhotosChange = (event) => {
     const files = event.target.files;
@@ -24,12 +27,15 @@ const CreatePostForm = () => {
         formData.append('photos', file);
       }
 
-      formData.append('title', 'New Post');
-      formData.append('description', 'Description content');
+      formData.append('title', '123 12313 12312321 Hihi haha');
+      formData.append(
+        'description',
+        'Chìm đắm trong nét đẹp lao động của cộng đồng startup - freelancer, bạn sẽ luôn cảm nhận được sự tập trung tuyệt đối vào mục tiêu hoàn tất công việc. Thiết kế không gian chia sẻ rộng rãi và thoáng đãng của MindX là điều kiện lý tưởng cho những ý tưởng sáng tạo và đột phá. Hãy nâng cao năng suất và để những thành tựu nói lên giá trị của bạn. Dù bạn là freelancer hay doanh nghiệp hoạt động tại MindX, chúng ta đều hướng đến sự thành công.'
+      );
 
       setLoading(true);
       await PostAPI.create(formData);
-      // Fetch post API
+      await dispatch(fetchPosts());
     } catch (error) {
       console.log('create-new-post-failed:', error);
       setError(error);
@@ -42,10 +48,11 @@ const CreatePostForm = () => {
     <div className='mb-[60px] max-w-[500px]'>
       <div className='mb-6 flex gap-4 items-center overflow-x-auto'>
         {selectedPhotos &&
-          selectedPhotos.map((photo) => {
+          selectedPhotos.map((photo, index) => {
             const previewURL = URL.createObjectURL(photo);
             return (
               <img
+                key={`img-${index}`}
                 src={previewURL}
                 alt='Preview post image'
                 className='rounded-2xl w-[110px] h-[110px] object-cover'

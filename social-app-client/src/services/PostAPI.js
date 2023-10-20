@@ -1,8 +1,8 @@
 import api from './axiosInstance';
 
 const PostAPI = {
-  getAll: (limit = 10, page = 1) => {
-    const url = `/posts?limit=${limit}&page=${page}`;
+  getAll: (limit = 10, page = 1, sort = 'desc') => {
+    const url = `/posts?limit=${limit}&page=${page}&sort=${sort}`;
     return api.get(url);
   },
   getById: (id) => {

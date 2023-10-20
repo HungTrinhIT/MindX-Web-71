@@ -43,14 +43,26 @@ const getAllPost = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const sort = req.query.sort || 'desc'; //
 
-    const posts = await db.posts.find().skip(skip).limit(limit).toArray();
+    // 1. Tăng dần: ascending - asc
+    // 2. Giảm dần: descending - desc
+    const skip = (page - 1) * limit;
+    const sortValue = sort === 'desc' ? -1 : 1;
+
+    const posts = await db.posts
+      .find()
+      .sort({
+        createdAt: sortValue,
+      })
+      .skip(skip)
+      .limit(limit)
+      .toArray();
     const totalPost = await db.posts.countDocuments();
     const totalPages = Math.ceil(totalPost / limit);
 
     res.json({
-      data: posts,
+      data: posts || [],
       pagination: {
         totalItems: totalPost,
         limit,
