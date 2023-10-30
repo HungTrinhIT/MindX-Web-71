@@ -27,7 +27,7 @@ const CreatePostForm = () => {
         formData.append('photos', file);
       }
 
-      formData.append('title', '123 12313 12312321 Hihi haha');
+      formData.append('title', 'Lễ 20-10, nam thanh niên không tặng quà cho bạn gái và cái kêt');
       formData.append(
         'description',
         'Chìm đắm trong nét đẹp lao động của cộng đồng startup - freelancer, bạn sẽ luôn cảm nhận được sự tập trung tuyệt đối vào mục tiêu hoàn tất công việc. Thiết kế không gian chia sẻ rộng rãi và thoáng đãng của MindX là điều kiện lý tưởng cho những ý tưởng sáng tạo và đột phá. Hãy nâng cao năng suất và để những thành tựu nói lên giá trị của bạn. Dù bạn là freelancer hay doanh nghiệp hoạt động tại MindX, chúng ta đều hướng đến sự thành công.'

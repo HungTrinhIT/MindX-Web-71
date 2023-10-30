@@ -8,8 +8,13 @@ const FETCH_POSTS = 'app/FETCH_POSTS';
 export const fetchPosts = createAsyncThunk(
   FETCH_POSTS,
   async (payload, { rejectWithValue, fulfillWithValue }) => {
+    const params = {
+      page: payload?.page,
+    };
+    console.log('🚀 ~ file: postAction.js:14 ~ params:', params);
+
     try {
-      const apiResponse = await PostAPI.getAll();
+      const apiResponse = await PostAPI.getAll(params);
       const payload = {
         posts: apiResponse.data.data,
         pagination: apiResponse.data.pagination,

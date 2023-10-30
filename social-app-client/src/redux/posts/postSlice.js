@@ -20,8 +20,12 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, { payload }) => {
         state.fetchPostPending = false;
-        state.posts = payload.posts;
-        state.pagination = payload.pagination;
+        if (
+          state.pagination?.currentPage !== payload?.pagination?.currentPage
+        ) {
+          state.posts = [...state.posts, ...payload.posts];
+          state.pagination = payload.pagination;
+        }
       })
       .addCase(fetchPosts.rejected, (state, { payload }) => {
         state.fetchPostPending = true;

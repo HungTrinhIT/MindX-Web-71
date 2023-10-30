@@ -1,14 +1,59 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Loading from '../../components/Loading/Loading';
 import CreatePostForm from '../../components/CreatePostForm/CreatePostForm';
 import { fetchPosts } from '../../redux/posts/postAction';
 const Home = () => {
   const dispatch = useDispatch();
-  const { posts, fetchPostPending } = useSelector((state) => state.posts);
+  const { posts, fetchPostPending, pagination } = useSelector(
+    (state) => state.posts
+  );
+  const [page, setPage] = useState(1);
+  const { currentPage, totalPages } = pagination || {};
+
+  const shouldFetchMorePost = currentPage < totalPages;
+  console.log(
+    '🚀 ~ file: Home.jsx:15 ~ Home ~ shouldFetchMorePost:',
+    shouldFetchMorePost
+  );
+  useEffect(() => {
+    const payload = {
+      page,
+    };
+    dispatch(fetchPosts(payload));
+  }, []);
 
   useEffect(() => {
-    dispatch(fetchPosts());
-  }, []);
+    if (shouldFetchMorePost) {
+      const payload = {
+        page,
+      };
+      dispatch(fetchPosts(payload));
+    }
+  }, [page]);
+
+  const observer = useRef(null);
+  const lastElementRef = useCallback(
+    (node) => {
+      if (fetchPostPending) return;
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+
+      observer.current = new IntersectionObserver((entries) => {
+        const firstEntry = entries[0];
+
+        if (firstEntry.isIntersecting && shouldFetchMorePost) {
+          setPage((prev) => prev + 1);
+        }
+      });
+
+      if (node) {
+        observer.current.observe(node);
+      }
+    },
+    [fetchPostPending]
+  );
 
   const listPost =
     posts.length === 0 ? (
@@ -52,14 +97,12 @@ const Home = () => {
       </div>
     );
 
-  if (fetchPostPending) {
-    return <p>Fetching posts...</p>;
-  }
-
   return (
     <div className='flex flex-col justify-center items-center'>
       <CreatePostForm />
       {listPost}
+      {fetchPostPending && <Loading />}
+      <div ref={lastElementRef} className='invisible'></div>
     </div>
   );
 };
